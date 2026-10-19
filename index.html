@@ -73,7 +73,7 @@
 
   /* ---------- Layout ---------- */
   main { flex: 1; padding: 0 clamp(6px, 2vw, 12px) clamp(4px, 1vh, 8px); overflow: hidden; position: relative; }
-  .view { position: absolute; top: 0; left: 0; width: 100%; min-height: 100%; height: auto; overflow: hidden; -webkit-overflow-scrolling: touch; }
+  .view { position: absolute; top: 0; left: 0; width: 100%; min-height: 100%; height: auto; overflow: visible; -webkit-overflow-scrolling: touch; }
   .grid { display: grid; gap: clamp(4px, 1vh, 8px); grid-template-columns: 1fr; }
   .grid-board { display: grid; grid-template-columns: repeat(auto-fill, minmax(clamp(48px, 12vw, 72px), 1fr)); gap: clamp(3px, 0.8vw, 6px); }
   .card {
@@ -181,7 +181,7 @@
     width: 100%; background: #0a0514; border: 1px solid var(--border); color: var(--text);
     border-radius: 8px; padding: 8px; font-size: 14px;
   }
-  .roster-list { max-height: 320px; overflow: auto; margin-top: 8px; }
+  .roster-list { margin-top: 8px; }
   .roster-item { display: flex; align-items: center; gap: 6px; padding: 6px; border-bottom: 1px solid var(--border); }
   .roster-item input { flex: 1; }
   .roster-item button { background: transparent; border: 1px solid var(--border); color: var(--muted); border-radius: 6px; padding: 4px 8px; cursor: pointer; }
