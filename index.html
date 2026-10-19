@@ -151,9 +151,12 @@
   .loadout { font-size: clamp(10px, 2.5vw, 14px); color: var(--muted); text-align: center; margin-bottom: clamp(8px, 2vh, 12px); }
   /* ---------- Perk Library ---------- */
   /* Fixed under the header (var(--hdr-h) is set from JS so it matches the real
-     header height). Sits outside <main> so the scroll engine cannot translate it. */
+     header height). Sits outside <main> so the scroll engine cannot translate it.
+     --lib-top is how far the scrolling list must start down to clear this bar; it is
+     pure CSS so opening the library never forces a layout measurement in JS. */
+  :root { --hdr-h: 56px; --lib-bar-h: 78px; --lib-top: calc(var(--hdr-h) + var(--lib-bar-h) + 10px); }
   .perk-searchbar {
-    position: fixed; left: 0; right: 0; top: var(--hdr-h, 56px); z-index: 40;
+    position: fixed; left: 0; right: 0; top: var(--hdr-h); z-index: 40;
     background: var(--panel); border-bottom: 1px solid var(--border);
     padding: 8px clamp(10px, 3vw, 18px);
     box-shadow: 0 6px 14px rgba(0,0,0,.45);
@@ -420,7 +423,7 @@
     <div class="brand">
       <img class="logo" src="data:image/webp;base64,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" alt="DBD" />
       <div>
-        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.3</span></h1>
+        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.4</span></h1>
         <small>Survivor Endurance Marathon</small>
       </div>
     </div>
@@ -1801,39 +1804,74 @@ function activeView(){
   if(perkLibraryOpen) return document.getElementById('perkBrowse');
   return document.querySelector('.view.active');
 }
-/* Largest offset the given view can be scrolled to. Uses the view's real bounding
-   box rather than scrollHeight so padding applied to the view itself (the Perk
-   Library reserves space for its fixed search bar) is included. */
+/* Largest offset the given view can be scrolled to. Reads the view's real height so
+   padding applied to the view itself (the Perk Library reserves space for its fixed
+   search bar) is included.
+   Reading scrollHeight forces a synchronous layout, which costs ~1s the first time
+   the 179-row library appears, so the measurement is cached per view and only
+   refreshed when the content changes (see invalidateScrollMetrics).
+   The visible area is measured too: the Perk Library's card starts well below the top
+   of <main> (it clears the fixed search bar), so the area it can occupy is much
+   smaller than main.clientHeight. Using main.clientHeight instead made the final
+   perk rows unreachable. */
+var _scrollMetrics = {}, _scrollViewports = {};
+function invalidateScrollMetrics(id){
+  if(id){ delete _scrollMetrics[id]; delete _scrollViewports[id]; }
+  else { _scrollMetrics = {}; _scrollViewports = {}; }
+}
 function maxScrollFor(v){
-  var main = document.querySelector('main');
-  if(!v || !main) return 0;
-  var cs = getComputedStyle(main);
-  var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
-  var csV = getComputedStyle(v);
-  var padV = parseFloat(csV.paddingTop) + parseFloat(csV.paddingBottom);
-  // scrollHeight excludes the element's own padding, which the Perk Library uses to
-  // clear its fixed search bar, so add it back before comparing to the viewport.
-  // The +2 absorbs sub-pixel rounding (fractional clamp() paddings) so the final
-  // row is always fully reachable rather than stopping a pixel short.
-  return Math.max(0, v.scrollHeight + padV - main.clientHeight + pad + 2);
+  if(!v) return 0;
+  var m = _scrollMetrics[v.id];
+  if(m === undefined){
+    var csV = getComputedStyle(v);
+    var padV = parseFloat(csV.paddingTop) + parseFloat(csV.paddingBottom);
+    if(!isFinite(padV)) padV = 0;
+    m = v.scrollHeight + padV;
+    _scrollMetrics[v.id] = m;
+  }
+  var viewport = _scrollViewports[v.id];
+  if(viewport === undefined) viewport = mainBox(v).viewport;
+  return Math.max(0, m - viewport + mainBox(v).pad + 2);
 }
 function applyScroll(){
   var v = activeView();
   if(!v) return;
-  var maxScroll = maxScrollFor(v);
   var off = scrollOffsets[v.id] || 0;
-  off = Math.max(0, Math.min(maxScroll, off));
-  scrollOffsets[v.id] = off;
+  // At offset 0 there is nothing to clamp, and measuring the content would force a
+  // synchronous layout of the whole page (≈1s for the 179-row library). Skipping the
+  // measurement here keeps opening the library instant; the height gets cached on the
+  // first real scroll gesture.
+  if(off > 0){
+    var maxScroll = maxScrollFor(v);
+    off = Math.min(maxScroll, off);
+    scrollOffsets[v.id] = off;
+  }
   v.style.transform = 'translateY(-' + off + 'px)';
 }
 function doScroll(delta){
   var v = activeView();
   if(!v) return;
-  var maxScroll = maxScrollFor(v);
   var off = (scrollOffsets[v.id] || 0) + delta;
-  off = Math.max(0, Math.min(maxScroll, off));
+  if(off < 0) off = 0;
+  if(off > 0){
+    var maxScroll = maxScrollFor(v);   // uses, and if needed fills, the cache
+    if(off > maxScroll) off = maxScroll;
+  }
   scrollOffsets[v.id] = off;
   applyScroll();
+}
+/* Viewport height plus the app's own vertical padding — everything the cached content
+   height is compared against. Cheap: reads no scroll geometry. */
+function mainBox(v){
+  var main = document.querySelector('main');
+  var h = main ? main.clientHeight : 0;
+  var cs = main ? getComputedStyle(main) : null;
+  var pad = 0;
+  if(cs){
+    pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+    if(!isFinite(pad)) pad = 0;
+  }
+  return { viewport: h, pad: pad };
 }
 window.addEventListener('scrollUp', function(){ doScroll(-40); });
 window.addEventListener('scrollDown', function(){ doScroll(40); });
@@ -2008,45 +2046,84 @@ function showPerkLibrary(){
   document.getElementById('view-library').classList.add('active');
   perkLibraryOpen = true;
   renderPerkLibrary();
-  document.querySelectorAll('.view').forEach(v=>{ v.style.transform=''; });
   scrollOffsets['perkBrowse'] = 0;
-  // Measure once layout has settled, then again after applying the correction so a
-  // residual overlap caused by the card's own padding is fully absorbed.
-  showPerkSearchBar(true);
-  showPerkSearchBar(true);
   applyScroll();
+  // Warm the cached content height after the list has painted, so the user's first
+  // swipe is smooth. Measuring is unavoidable once (≈1s on weak hardware for 179
+  // rows), so it is deferred until the page is visible instead of blocking the open.
+  _warmLibraryMetrics();
 }
-/* The search bar is fixed under the header, so the scrolling list needs to start
-   below it. The reserved height is the bar height plus the gap by which the first
-   row still sits underneath it — measured from real geometry, because the card's
-   padding and border are not part of scrollHeight and cannot be derived reliably.
-   The base padding is remembered so reopening never compounds the correction. */
-var _perkBasePad = null;
-function perkSearchBarSpace(){
-  const bar = document.getElementById('perkSearchBar');
-  if(!bar || bar.style.display === 'none') return 0;
-  return Math.round(bar.getBoundingClientRect().height || 0);
+/* Measuring the list forces a synchronous style+layout of all 179 rows, which costs
+   roughly a second on weak hardware (the Rabbit R1). That cost cannot be avoided, so
+   it is paid here — after the list has painted and the user is already reading it —
+   rather than on the tap that opens the page.
+   The layout keeps settling for a few frames while the perk icons resolve, so the
+   cached height is only trusted once two consecutive frames agree on it. */
+var _warmHandle = null, _warmPrev = null, _warmTries = 0;
+function _warmLibraryMetrics(){
+  if(_warmHandle !== null) return;
+  if(typeof requestAnimationFrame !== 'function'){ return; }
+  _warmPrev = null;
+  _warmTries = 0;
+  var measure = function(){
+    _warmHandle = null;
+    if(!perkLibraryOpen) return;
+    var v = document.getElementById('perkBrowse');
+    if(!v) return;
+    // Measure the actual rendered content extent — scrollHeight excludes the
+    // view's own padding, and the difference was enough to make the final perk
+    // row unreachable. Use getBoundingClientRect on the list container instead,
+    // which captures the true visual bottom including all spacing.
+    var list = document.getElementById('perkList');
+    var csV = getComputedStyle(v);
+    var padBottom = parseFloat(csV.paddingBottom) || 0;
+    if(list){
+      var vRect = v.getBoundingClientRect();
+      var listRect = list.getBoundingClientRect();
+      var contentH = Math.ceil(listRect.bottom - vRect.top + padBottom);
+      _scrollMetrics['perkBrowse'] = contentH;
+      // The visible area is smaller than main.clientHeight because the card
+      // starts below the fixed search bar. Measure it directly.
+      var main = document.querySelector('main');
+      if(main){
+        var mainRect = main.getBoundingClientRect();
+        _scrollViewports['perkBrowse'] = Math.max(0, mainRect.bottom - vRect.top);
+      }
+    } else {
+      invalidateScrollMetrics('perkBrowse');
+      maxScrollFor(v);
+    }
+    var h = _scrollMetrics['perkBrowse'];
+    _warmTries++;
+    if(h === _warmPrev || _warmTries >= 12) return;   // settled (or gave up)
+    _warmPrev = h;
+    _warmHandle = requestAnimationFrame(measure);
+  };
+  _warmHandle = requestAnimationFrame(measure);
+}
+/* The search bar is fixed under the header, so the list must start below it. That
+   clearance is pure CSS (--lib-top/--lib-bar-h); only the header's own height has to
+   be measured, and that happens once at startup rather than on every open. */
+function syncHeaderHeight(){
+  const hdr = document.querySelector('header');
+  if(!hdr) return;
+  // Reading this at startup is cheap; doing it inside showPerkLibrary would force a
+  // synchronous layout of the whole 179-row list and cost ~1s on weak hardware.
+  const h = Math.round(hdr.getBoundingClientRect().height);
+  if(h > 0) document.documentElement.style.setProperty('--hdr-h', h + 'px');
 }
 function showPerkSearchBar(on){
   const bar = document.getElementById('perkSearchBar');
   if(!bar) return;
   bar.style.display = on ? 'block' : 'none';
+  // The list clears the bar using a static CSS offset (--lib-top) rather than a
+  // runtime measurement: reading geometry here would force a synchronous layout of
+  // all 179 rows on first open, which cost ~1s on a weak device.
   const view = document.getElementById('view-library');
-  const main = document.querySelector('main');
-  if(!view || !main) return;
-  // The .view is position:absolute;top:0, so padding on <main> cannot move it.
-  // Offset the view itself, which is what the scroll engine transforms.
-  if(_perkBasePad === null) _perkBasePad = view.style.paddingTop;
-  if(!on){ view.style.paddingTop = _perkBasePad; return; }
-  const hdr = document.querySelector('header');
-  const hh = hdr ? Math.round(hdr.getBoundingClientRect().height) : 56;
-  bar.style.top = hh + 'px';
-  view.style.paddingTop = _perkBasePad;
-  void bar.offsetHeight;
-  const barBottom = bar.getBoundingClientRect().bottom;
-  const row = document.querySelector('#perkBrowse .perk-row');
-  const rowTop = row ? row.getBoundingClientRect().top : barBottom + 10;
-  view.style.paddingTop = Math.max(0, Math.round(barBottom - rowTop) + 10) + 'px';
+  if(view){
+    view.style.paddingTop = on ? 'var(--lib-top)' : '';
+    invalidateScrollMetrics('perkBrowse');   // its padding just changed
+  }
 }
 /* On the Rabbit R1 the on-screen keyboard has no dismiss key, so blur the field
    explicitly and put the list back on screen. */
@@ -2096,6 +2173,7 @@ function renderPerkLibrary(){
   list.querySelectorAll('.perk-row').forEach(b => {
     b.onclick = () => openPerkDetail(parseInt(b.getAttribute('data-perk'), 10));
   });
+  invalidateScrollMetrics('perkBrowse');   // row count (and so height) changed
 }
 function openPerkDetail(i){
   const p = PERK_DESCRIPTIONS[i];
@@ -2211,7 +2289,7 @@ function _startMomentum(vel){
       _momentumRaf = null;
       return;
     }
-    // check bounds before scrolling
+    // check bounds before scrolling (uses the cached height; never measures here)
     var view = activeView();
     var main = document.querySelector('main');
     if(!view || !main) { _momentumActive = false; _momentumRaf = null; return; }
@@ -2291,8 +2369,14 @@ document.addEventListener('touchend', function(e){
 });
 
 /* init: start on the mystery portrait, waiting for the Spin lever  */
+syncHeaderHeight();
 render();
 setTimeout(preloadPortraits, 500);
+// The header height can change on resize (it wraps on narrow screens), so keep the
+// search bar's offset correct then too — outside the library open path. Resize also
+// invalidates cached heights, since wrapping changes how tall views are.
+window.addEventListener('resize', function(){ syncHeaderHeight(); invalidateScrollMetrics(); });
+window.addEventListener('orientationchange', function(){ syncHeaderHeight(); invalidateScrollMetrics(); });
 </script>
 </body>
 </html>
