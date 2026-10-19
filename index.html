@@ -107,6 +107,10 @@
     margin: 0 auto 6px; position: relative;
   }
   .survivor-portrait img { width: 100%; height: 100%; object-fit: cover; }
+  /* slot-machine reel */
+  .survivor-portrait.spinning { box-shadow: 0 0 12px rgba(245,197,66,.55); }
+  .survivor-portrait.spinning img { filter: blur(.7px); animation: reel .07s linear infinite; }
+  @keyframes reel { 0% { transform: translateY(-3px); } 50% { transform: translateY(3px); } 100% { transform: translateY(-3px); } }
   .survivor-name { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 4px; }
   .tier-chip {
     display: block; width: fit-content; margin: 8px auto 10px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
@@ -553,6 +557,86 @@ function hueFor(name){ let h=0; for(let i=0;i<name.length;i++) h=(h*31+name.char
 function initials(name){ return name.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase(); }
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2200); }
 
+/* ============================ SLOT-MACHINE REEL ============================ */
+var _reelTimer = null, _reelToken = 0, _portraitCache = {};
+function preloadPortraits(){
+  enabledSurvivors().forEach(s=>{
+    if(!s.imageUrl || _portraitCache[s.id]) return;
+    const im = new Image(); im.src = s.imageUrl; _portraitCache[s.id] = im;
+    if(im.decode) im.decode().catch(()=>{});
+  });
+}
+function paintPortrait(id){
+  const s = state.survivors.find(x=>x.id===id && x.enabled);
+  if(!s) return;
+  const portrait = document.getElementById("curPortrait");
+  const nameEl = document.getElementById("curName");
+  if(!portrait || !nameEl) return;
+  if(s.imageUrl){
+    let img = portrait.querySelector("img");
+    if(!img){ portrait.textContent = ""; img = document.createElement("img"); img.alt = ""; portrait.appendChild(img); }
+    if(img.getAttribute("src") !== s.imageUrl) img.src = s.imageUrl;
+    portrait.style.background = "";
+  } else {
+    portrait.textContent = initials(s.name);
+    portrait.style.background = "linear-gradient(135deg, hsl("+hueFor(s.name)+",60%,30%), hsl("+((hueFor(s.name)+60)%360)+",60%,20%))";
+  }
+  nameEl.textContent = s.name;
+}
+/* delay schedule: ~1.6s of fast blur frames, then exponential slowdown to 3000ms */
+function reelDelays(){
+  const out = []; let t = 0;
+  while(t < 1600){ out.push(20); t += 20; }
+  let d = 34;
+  while(t < 3000){
+    const dd = Math.min(Math.round(d), 3000 - t);
+    if(dd <= 0) break;
+    out.push(dd); t += dd;
+    d = d * 1.32 + 4;
+  }
+  return out;
+}
+function cancelReel(){
+  if(_reelTimer){ clearTimeout(_reelTimer); _reelTimer = null; }
+  _reelToken++;
+  const p = document.getElementById("curPortrait");
+  if(p) p.classList.remove("spinning");
+}
+function stopReel(){ const id = state.currentId; cancelReel(); if(id) paintPortrait(id); }
+function spinPortrait(finalId){
+  cancelReel();
+  const portrait = document.getElementById("curPortrait");
+  const dash = document.getElementById("view-dashboard");
+  if(!portrait || !dash || !dash.classList.contains("active")) return;
+  const pool = enabledSurvivors();
+  const finalIdx = pool.findIndex(s=>s.id===finalId);
+  if(finalIdx < 0 || pool.length < 2){ paintPortrait(finalId); return; }
+  preloadPortraits();
+  const delays = reelDelays();
+  const K = delays.length, len = pool.length;
+  // walk the wheel forward K steps so the last frame lands exactly on the pick
+  const startIdx = ((finalIdx - K) % len + len) % len;
+  const token = ++_reelToken;
+  portrait.classList.add("spinning");
+  paintPortrait(pool[startIdx].id);
+  let j = 0;
+  const tick = () => {
+    if(token !== _reelToken) return;
+    j++;
+    if(j > K){
+      _reelTimer = null;
+      portrait.classList.remove("spinning");
+      paintPortrait(finalId);
+      return;
+    }
+    const s = pool[(startIdx + j) % len];
+    const cached = s.imageUrl ? _portraitCache[s.id] : null;
+    if(!cached || (cached.complete && cached.naturalWidth)) paintPortrait(s.id);
+    _reelTimer = setTimeout(tick, delays[j-1]);
+  };
+  _reelTimer = setTimeout(tick, delays[0]);
+}
+
 function rollNext(){
   if(currentSurvivor()) return;
   state.currentId = null; // clear any stale id that no longer maps to an enabled survivor
@@ -564,6 +648,7 @@ function rollNext(){
   else state.currentChallenge = null;
   saveState();
   render();
+  spinPortrait(pick.id);
 }
 
 function checkVictory(){
@@ -700,6 +785,7 @@ function renderDashboard(){
     else state.currentChallenge = null;
     saveState();
     cur = currentSurvivor();
+    if(cur) spinPortrait(cur.id);
   }
   const portrait = document.getElementById("curPortrait");
   if(cur){
@@ -1079,6 +1165,7 @@ function closeModal(){ document.getElementById("modalBg").classList.remove("show
 /* init */
 if(state.currentId===null && remainingPool().length>0) rollNext();
 render();
+setTimeout(preloadPortraits, 500);
 </script>
 </body>
 </html>
