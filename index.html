@@ -472,6 +472,34 @@ function defaultState(){
     achievements: {}
   };
 }
+/* Rehydrate roster: portraits are NEVER persisted (localStorage quota is tiny,
+   ~5MB, while the embedded roster is ~9.5MB). Default portraits are restored
+   from DEFAULT_ROSTER; only custom/overridden images are kept. */
+function hydrateRoster(arr){
+  return arr.map(surv=>{
+    const def = DEFAULT_ROSTER.find(d=>d.id===surv.id);
+    const out = {
+      id: surv.id,
+      name: surv.name || (def ? def.name : "Survivor"),
+      enabled: surv.enabled !== false
+    };
+    const img = surv.imageUrl || (def ? def.imageUrl : null);
+    if(img) out.imageUrl = img;
+    return out;
+  });
+}
+/* Slim copy for storage: drop imageUrl when it matches the bundled default. */
+function persistableState(){
+  const out = {};
+  for(const k in state){ if(k !== "survivors") out[k] = state[k]; }
+  out.survivors = state.survivors.map(surv=>{
+    const def = DEFAULT_ROSTER.find(d=>d.id===surv.id);
+    const o = {id:surv.id, name:surv.name, enabled:!!surv.enabled};
+    if(surv.imageUrl && (!def || surv.imageUrl !== def.imageUrl)) o.imageUrl = surv.imageUrl;
+    return o;
+  });
+  return out;
+}
 function loadState(){
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -479,6 +507,7 @@ function loadState(){
     const s = JSON.parse(raw);
     // migrate / sanitize
     if(!s.survivors || !s.survivors.length) s.survivors = JSON.parse(JSON.stringify(DEFAULT_ROSTER));
+    else s.survivors = hydrateRoster(s.survivors);
     if(!s.completed) s.completed = [];
     if(!s.deathsByTier) s.deathsByTier = {};
     if(s.randomChallenge===undefined) s.randomChallenge = false;
@@ -493,7 +522,15 @@ function loadState(){
     return s;
   } catch(e){ return defaultState(); }
 }
-function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+function saveState(){
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(persistableState()));
+  } catch(e){
+    // Never let a quota/serialization failure abort the render that called us.
+    console.warn("saveState failed:", e && e.name, e && e.message);
+    try{ toast("Couldn't save (storage full)"); }catch(_){}
+  }
+}
 
 /* ============================ HELPERS ============================ */
 function enabledSurvivors(){ return state.survivors.filter(s=>s.enabled); }
