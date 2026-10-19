@@ -150,6 +150,23 @@
   }
   .loadout { font-size: clamp(10px, 2.5vw, 14px); color: var(--muted); text-align: center; margin-bottom: clamp(8px, 2vh, 12px); }
   /* ---------- Perk Library ---------- */
+  /* Fixed under the header (var(--hdr-h) is set from JS so it matches the real
+     header height). Sits outside <main> so the scroll engine cannot translate it. */
+  .perk-searchbar {
+    position: fixed; left: 0; right: 0; top: var(--hdr-h, 56px); z-index: 40;
+    background: var(--panel); border-bottom: 1px solid var(--border);
+    padding: 8px clamp(10px, 3vw, 18px);
+    box-shadow: 0 6px 14px rgba(0,0,0,.45);
+  }
+  .perk-searchbar input {
+    width: 100%; box-sizing: border-box; padding: 8px 10px; font-size: 13px;
+    border-radius: 8px; background: #0a0514; color: var(--text); border: 1px solid var(--border);
+  }
+  .perk-searchmeta {
+    display: flex; align-items: center; gap: 8px; margin-top: 6px;
+  }
+  .perk-searchmeta .sub { flex: 1; font-size: 11px; }
+  .perk-searchbar .btn { font-size: 11px; padding: 4px 10px; white-space: nowrap; }
   .perk-row {
     display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
     background: #0a0514; border: 1px solid var(--border); border-radius: 10px;
@@ -169,10 +186,7 @@
   .perk-detail {
     position: fixed; top: 0; right: 0; bottom: 0; left: 0; z-index: 60;
     background: rgba(5,2,12,.72); display: flex; align-items: flex-end; justify-content: center;
-    overflow: hidden;
   }
-  /* While the sheet is the active scroll view its wrapper is translated, so keep the
-     dark backdrop pinned and let only the panel move. */
   .perk-detail .pd-outer { display: flex; align-items: flex-end; justify-content: center; width: 100%; }
   @media (min-width: 641px) { .perk-detail .pd-outer { align-items: center; } }
   .perk-detail .pd-wrap {
@@ -191,7 +205,8 @@
   .perk-detail .pd-body {
     margin-top: 10px; overflow-y: auto; -webkit-overflow-scrolling: touch;
     font-size: clamp(11px, 2.7vw, 14px); line-height: 1.5;
-    flex: 1 1 auto; min-height: 0; overscroll-behavior: contain;
+    flex: 0 1 auto; min-height: 0; max-height: 60vh; max-height: 60dvh;
+    overscroll-behavior: contain; touch-action: pan-y;
   }
   .perk-detail .pd-flavour {
     margin-top: 10px; font-style: italic; color: var(--gold);
@@ -360,6 +375,9 @@
     .perk-tile .perk-tname { font-size: 9px; }
     .perk-note { font-size: 10px; }
     .perk-card .perk-reroll { font-size: 9px; padding: 3px 8px; }
+    .perk-searchbar { padding: 6px 8px; }
+    .perk-searchbar input { font-size: 12px; padding: 6px 8px; }
+    .perk-searchbar .btn { font-size: 10px; padding: 3px 8px; }
     .perk-row { padding: 4px 6px; gap: 6px; border-radius: 8px; }
     .perk-row .pr-icon { width: 28px; height: 28px; }
     .perk-row .pr-name { font-size: 11px; }
@@ -402,7 +420,7 @@
     <div class="brand">
       <img class="logo" src="data:image/webp;base64,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" alt="DBD" />
       <div>
-        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.1</span></h1>
+        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.3</span></h1>
         <small>Survivor Endurance Marathon</small>
       </div>
     </div>
@@ -552,14 +570,6 @@
           <h2 style="margin:0">Perk Library</h2>
           <button class="btn ghost" id="libraryBack" style="padding:6px 12px;font-size:12px">Back</button>
         </div>
-        <input id="perkSearch" type="text" placeholder="Search perks…" autocomplete="off" spellcheck="false"
-               style="width:100%;box-sizing:border-box;padding:8px 10px;font-size:13px;border-radius:8px;background:#0a0514;color:var(--text);border:1px solid var(--border)" />
-        <div style="display:flex;gap:6px;margin:8px 0">
-          <button class="btn ghost" id="perkFilterA" style="flex:1;font-size:11px">Perk A</button>
-          <button class="btn ghost" id="perkFilterB" style="flex:1;font-size:11px">Perk B</button>
-          <button class="btn ghost" id="perkFilterAll" style="flex:1;font-size:11px">All</button>
-        </div>
-        <div class="sub" id="perkCount">0 perks</div>
         <div id="perkList" style="margin-top:6px"></div>
       </div>
     </section>
@@ -567,6 +577,19 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Perk Library search bar. It lives OUTSIDE <main> on purpose: the scroll engine
+     scrolls by translating <main>, and a translated ancestor breaks position:fixed,
+     so anything inside it would slide away with the list. Keeping it here pins it
+     under the header, which is what the R1 needs to dismiss its keyboard. -->
+<div class="perk-searchbar" id="perkSearchBar" style="display:none">
+  <input id="perkSearch" type="text" placeholder="Search perks…" autocomplete="off" spellcheck="false" />
+  <div class="perk-searchmeta">
+    <div class="sub" id="perkCount" style="margin:0">0 perks</div>
+    <button class="btn ghost" id="perkSearchDone">Done</button>
+  </div>
+</div>
+
 <div class="modal-bg" id="modalBg">
   <div class="modal" id="modal"></div>
 </div>
@@ -1762,6 +1785,7 @@ var PAGES = ['dashboard','board','stats','rules','settings'];
 var pageIndex = 0;
 function showPage(i){
   _cancelMomentum();
+  if(perkLibraryOpen && typeof showPerkSearchBar === 'function') showPerkSearchBar(false);
   perkLibraryOpen = false;   // leaving the library clears its nav/scroll override
   pageIndex = ((i % PAGES.length) + PAGES.length) % PAGES.length;
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===PAGES[pageIndex]));
@@ -1774,34 +1798,38 @@ window.addEventListener('sideClick', function(){ showPage(pageIndex+1); });
 var scrollOffsets = {};
 var perkLibraryOpen = false;   // true while the Perk Library page is showing
 function activeView(){
-  if(perkLibraryOpen){
-    if(isLibraryDetailOpen()) return document.getElementById('perkDetail');
-    return document.getElementById('perkBrowse');
-  }
+  if(perkLibraryOpen) return document.getElementById('perkBrowse');
   return document.querySelector('.view.active');
+}
+/* Largest offset the given view can be scrolled to. Uses the view's real bounding
+   box rather than scrollHeight so padding applied to the view itself (the Perk
+   Library reserves space for its fixed search bar) is included. */
+function maxScrollFor(v){
+  var main = document.querySelector('main');
+  if(!v || !main) return 0;
+  var cs = getComputedStyle(main);
+  var pad = parseFloat(cs.paddingTop) + parseFloat(cs.paddingBottom);
+  var csV = getComputedStyle(v);
+  var padV = parseFloat(csV.paddingTop) + parseFloat(csV.paddingBottom);
+  // scrollHeight excludes the element's own padding, which the Perk Library uses to
+  // clear its fixed search bar, so add it back before comparing to the viewport.
+  // The +2 absorbs sub-pixel rounding (fractional clamp() paddings) so the final
+  // row is always fully reachable rather than stopping a pixel short.
+  return Math.max(0, v.scrollHeight + padV - main.clientHeight + pad + 2);
 }
 function applyScroll(){
   var v = activeView();
   if(!v) return;
-  var main = document.querySelector('main');
-  var _cs = getComputedStyle(main);
-  var _pad = parseFloat(_cs.paddingTop) + parseFloat(_cs.paddingBottom);
-  var maxScroll = Math.max(0, v.scrollHeight - main.clientHeight + _pad);
+  var maxScroll = maxScrollFor(v);
   var off = scrollOffsets[v.id] || 0;
   off = Math.max(0, Math.min(maxScroll, off));
   scrollOffsets[v.id] = off;
   v.style.transform = 'translateY(-' + off + 'px)';
 }
 function doScroll(delta){
-  // Never scroll the Perk Library behind an open detail sheet — the sheet's own
-  // scroll area handles it (and a wheel event over it would otherwise leak here).
-  if(perkLibraryOpen && isLibraryDetailOpen()) return;
   var v = activeView();
   if(!v) return;
-  var main = document.querySelector('main');
-  var _cs = getComputedStyle(main);
-  var _pad = parseFloat(_cs.paddingTop) + parseFloat(_cs.paddingBottom);
-  var maxScroll = Math.max(0, v.scrollHeight - main.clientHeight + _pad);
+  var maxScroll = maxScrollFor(v);
   var off = (scrollOffsets[v.id] || 0) + delta;
   off = Math.max(0, Math.min(maxScroll, off));
   scrollOffsets[v.id] = off;
@@ -1809,10 +1837,16 @@ function doScroll(delta){
 }
 window.addEventListener('scrollUp', function(){ doScroll(-40); });
 window.addEventListener('scrollDown', function(){ doScroll(40); });
-document.querySelector('main').addEventListener('wheel', function(e){
+
+/* Mouse wheel / trackpad: same element-up rule as touch, so a wheel event over the
+   detail sheet's description scrolls the description instead of the page behind. */
+document.addEventListener('wheel', function(e){
+  if(document.getElementById('modalBg').classList.contains('show')) return;
+  var native = _touchScrollTarget(e.target, e.deltaY);
+  if(native) return;            // let the browser scroll that element
+  doScroll(e.deltaY);
   e.preventDefault();
-  doScroll(e.deltaY > 0 ? 40 : -40);
-}, {passive:false});
+}, {passive: false});
 document.addEventListener('keydown', function(e){
   if(e.key==='Escape'){ window.dispatchEvent(new Event('sideClick')); }
   if(e.key==='ArrowUp'){ window.dispatchEvent(new Event('scrollUp')); }
@@ -1955,17 +1989,83 @@ function isLibraryDetailOpen(){
 function showPerkLibrary(){
   _cancelMomentum();
   if(typeof _closePerkDetail === 'function') _closePerkDetail();
+  const inp = document.getElementById('perkSearch');
+  if(inp && !inp._perkWired){
+    inp._perkWired = true;
+    // Filter on every keystroke so results update as you type. 'input' fires for
+    // both physical keyboards and on-screen keyboards (incl. Android soft keyboards).
+    inp.addEventListener('input', renderPerkLibrary);
+    inp.addEventListener('keydown', function(ev){
+      if(ev.key === 'Enter' || ev.key === 'Escape'){ ev.preventDefault(); inp.blur(); }
+    });
+    const done = document.getElementById('perkSearchDone');
+    if(done) done.onclick = dismissPerkKeyboard;
+  }
+  if(inp) inp.value = '';
+  showPerkSearchBar(true);
   document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('active'));
   document.querySelectorAll('.view').forEach(v=>{ v.classList.remove('active'); v.style.transform=''; });
   document.getElementById('view-library').classList.add('active');
   perkLibraryOpen = true;
   renderPerkLibrary();
+  document.querySelectorAll('.view').forEach(v=>{ v.style.transform=''; });
+  scrollOffsets['perkBrowse'] = 0;
+  // Measure once layout has settled, then again after applying the correction so a
+  // residual overlap caused by the card's own padding is fully absorbed.
+  showPerkSearchBar(true);
+  showPerkSearchBar(true);
+  applyScroll();
+}
+/* The search bar is fixed under the header, so the scrolling list needs to start
+   below it. The reserved height is the bar height plus the gap by which the first
+   row still sits underneath it — measured from real geometry, because the card's
+   padding and border are not part of scrollHeight and cannot be derived reliably.
+   The base padding is remembered so reopening never compounds the correction. */
+var _perkBasePad = null;
+function perkSearchBarSpace(){
+  const bar = document.getElementById('perkSearchBar');
+  if(!bar || bar.style.display === 'none') return 0;
+  return Math.round(bar.getBoundingClientRect().height || 0);
+}
+function showPerkSearchBar(on){
+  const bar = document.getElementById('perkSearchBar');
+  if(!bar) return;
+  bar.style.display = on ? 'block' : 'none';
+  const view = document.getElementById('view-library');
+  const main = document.querySelector('main');
+  if(!view || !main) return;
+  // The .view is position:absolute;top:0, so padding on <main> cannot move it.
+  // Offset the view itself, which is what the scroll engine transforms.
+  if(_perkBasePad === null) _perkBasePad = view.style.paddingTop;
+  if(!on){ view.style.paddingTop = _perkBasePad; return; }
+  const hdr = document.querySelector('header');
+  const hh = hdr ? Math.round(hdr.getBoundingClientRect().height) : 56;
+  bar.style.top = hh + 'px';
+  view.style.paddingTop = _perkBasePad;
+  void bar.offsetHeight;
+  const barBottom = bar.getBoundingClientRect().bottom;
+  const row = document.querySelector('#perkBrowse .perk-row');
+  const rowTop = row ? row.getBoundingClientRect().top : barBottom + 10;
+  view.style.paddingTop = Math.max(0, Math.round(barBottom - rowTop) + 10) + 'px';
+}
+/* On the Rabbit R1 the on-screen keyboard has no dismiss key, so blur the field
+   explicitly and put the list back on screen. */
+function dismissPerkKeyboard(){
+  const inp = document.getElementById('perkSearch');
+  if(inp){
+    inp.blur();
+    // Clearing the query and re-rendering also puts the list back to the top, so
+    // the user always lands on a visible, full list after closing the keyboard.
+    if(inp.value){ inp.value = ''; renderPerkLibrary(); }
+  }
   scrollOffsets['perkBrowse'] = 0;
   applyScroll();
+  if(window.scrollTo) window.scrollTo(0, 0);
 }
 function closePerkLibrary(){
   if(typeof _closePerkDetail === 'function') _closePerkDetail();
   perkLibraryOpen = false;
+  showPerkSearchBar(false);
   showPage(PAGES.indexOf('settings'));
 }
 /* Strip accents so "deja" finds "Déjà Vu" and "boon circle" is forgiving. */
@@ -2061,6 +2161,28 @@ function renderChallengesList(){
 }
 
 /* ============================ TOUCH SCROLLING ============================ */
+/* Walk up from the touch target and return the first element that can actually
+   scroll in the direction the finger moves. Used to give a gesture to the right
+   element (e.g. the detail sheet's description) instead of the page behind it. */
+function _touchScrollTarget(node, deltaY){
+  var el = node;
+  while(el && el.nodeType === 1 && el !== document.body && el !== document.documentElement){
+    var cs = getComputedStyle(el);
+    var oy = cs.overflowY;
+    if((oy === 'auto' || oy === 'scroll') && el.scrollHeight > el.clientHeight + 1){
+      var max = el.scrollHeight - el.clientHeight;
+      // Only claim the gesture while there is still room to move that way; once the
+      // element is at its end the drag falls through so the page can keep scrolling.
+      if(deltaY > 0 ? el.scrollTop < max - 1 : el.scrollTop > 1) return el;
+    }
+    el = el.parentElement;
+  }
+  return null;
+}
+var _touchNativeEl = null;   // element handling this gesture, if not the page
+var _touchDecidedNative = false;
+var _touchTarget = null;
+var _touchInField = false;
 var _touchStartY = 0, _touchActive = false, _touchMoved = false;
 var _touchLastY = 0, _touchLastTime = 0, _touchVelocity = 0;
 var _momentumRaf = null, _momentumActive = false;
@@ -2093,9 +2215,7 @@ function _startMomentum(vel){
     var view = activeView();
     var main = document.querySelector('main');
     if(!view || !main) { _momentumActive = false; _momentumRaf = null; return; }
-    var _cs = getComputedStyle(main);
-    var _pad = parseFloat(_cs.paddingTop) + parseFloat(_cs.paddingBottom);
-    var maxScroll = Math.max(0, view.scrollHeight - main.clientHeight + _pad);
+    var maxScroll = maxScrollFor(view);
     var cur = scrollOffsets[view.id] || 0;
     var next = cur + delta;
     if(next < 0){ next = 0; v = 0; }
@@ -2118,6 +2238,11 @@ document.addEventListener('touchstart', function(e){
     _touchActive = true;
     _touchMoved = false;
     _touchVelocity = 0;
+    _touchNativeEl = null;
+    _touchTarget = e.target;
+    // Don't let the page drag while the on-screen keyboard is up: the user is
+    // panning inside the text field to place the caret / select text.
+    _touchInField = !!(e.target && e.target.closest && e.target.closest('input, textarea'));
   }
 }, {passive: true});
 document.addEventListener('touchmove', function(e){
@@ -2128,21 +2253,39 @@ document.addEventListener('touchmove', function(e){
   var dt = now - _touchLastTime;
   var deltaY = _touchLastY - currentY;
   if(Math.abs(deltaY) > 6) _touchMoved = true;
-  if(_touchMoved){
-    doScroll(deltaY);
-    if(dt > 0) _touchVelocity = (_touchVelocity * 0.6) + (deltaY / dt * 0.4);
+  if(!_touchMoved) return;
+
+  // Decide once per gesture who owns it.
+  if(_touchNativeEl === null && !_touchInField){
+    var found = _touchScrollTarget(_touchTarget, deltaY);
+    if(found){
+      // Let the browser scroll this element natively (smooth and, in an embedded
+      // frame, works even without the app's own momentum code).
+      _touchNativeEl = found;
+      _touchDecidedNative = true;
+    }
+  }
+  if(_touchNativeEl){
     _touchLastY = currentY;
     _touchLastTime = now;
-    e.preventDefault();
+    return;   // no preventDefault: native scrolling takes over
   }
+
+  doScroll(deltaY);
+  if(dt > 0) _touchVelocity = (_touchVelocity * 0.6) + (deltaY / dt * 0.4);
+  _touchLastY = currentY;
+  _touchLastTime = now;
+  e.preventDefault();
 }, {passive: false});
 document.addEventListener('touchend', function(e){
   if(_touchActive){
     _touchActive = false;
-    if(_touchMoved && Math.abs(_touchVelocity) > 0.1){
+    if(!_touchNativeEl && _touchMoved && Math.abs(_touchVelocity) > 0.1){
       _startMomentum(_touchVelocity);
     }
     _touchMoved = false;
+    _touchNativeEl = null;
+    _touchInField = false;
     _touchVelocity = 0;
   }
 });
