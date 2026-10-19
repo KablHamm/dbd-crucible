@@ -1091,6 +1091,7 @@ document.querySelectorAll("#nav button").forEach(b=>b.onclick=()=>{
 var PAGES = ['dashboard','board','stats','rules','settings'];
 var pageIndex = 0;
 function showPage(i){
+  _cancelMomentum();
   pageIndex = ((i % PAGES.length) + PAGES.length) % PAGES.length;
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active', b.dataset.view===PAGES[pageIndex]));
   document.querySelectorAll('.view').forEach(v=>{ v.classList.remove('active'); v.style.transform=''; });
@@ -1253,27 +1254,87 @@ function closeModal(){ document.getElementById("modalBg").classList.remove("show
 
 /* ============================ TOUCH SCROLLING ============================ */
 var _touchStartY = 0, _touchActive = false, _touchMoved = false;
+var _touchLastY = 0, _touchLastTime = 0, _touchVelocity = 0;
+var _momentumRaf = null, _momentumActive = false;
+
+function _cancelMomentum(){
+  if(_momentumRaf){ cancelAnimationFrame(_momentumRaf); _momentumRaf = null; }
+  _momentumActive = false;
+}
+
+function _startMomentum(vel){
+  _cancelMomentum();
+  if(Math.abs(vel) < 0.05) return;
+  _momentumActive = true;
+  var lastTime = performance.now();
+  var v = vel;
+  var friction = 0.95;
+  function step(now){
+    if(!_momentumActive) return;
+    var dt = Math.min(now - lastTime, 50);
+    lastTime = now;
+    // decelerate
+    v *= Math.pow(friction, dt / 16);
+    var delta = v * dt;
+    if(Math.abs(delta) < 0.5 || Math.abs(v) < 0.01){
+      _momentumActive = false;
+      _momentumRaf = null;
+      return;
+    }
+    // check bounds before scrolling
+    var view = activeView();
+    var main = document.querySelector('main');
+    if(!view || !main) { _momentumActive = false; _momentumRaf = null; return; }
+    var _cs = getComputedStyle(main);
+    var _pad = parseFloat(_cs.paddingTop) + parseFloat(_cs.paddingBottom);
+    var maxScroll = Math.max(0, view.scrollHeight - main.clientHeight + _pad);
+    var cur = scrollOffsets[view.id] || 0;
+    var next = cur + delta;
+    if(next < 0){ next = 0; v = 0; }
+    if(next > maxScroll){ next = maxScroll; v = 0; }
+    if(next === cur){ _momentumActive = false; _momentumRaf = null; return; }
+    scrollOffsets[view.id] = next;
+    applyScroll();
+    _momentumRaf = requestAnimationFrame(step);
+  }
+  _momentumRaf = requestAnimationFrame(step);
+}
+
 document.addEventListener('touchstart', function(e){
   if(e.touches.length === 1){
+    _cancelMomentum();
     _touchStartY = e.touches[0].clientY;
+    _touchLastY = _touchStartY;
+    _touchLastTime = performance.now();
     _touchActive = true;
     _touchMoved = false;
+    _touchVelocity = 0;
   }
 }, {passive: true});
 document.addEventListener('touchmove', function(e){
   if(!_touchActive || e.touches.length !== 1) return;
   var currentY = e.touches[0].clientY;
-  var deltaY = _touchStartY - currentY;
+  var now = performance.now();
+  var dt = now - _touchLastTime;
+  var deltaY = _touchLastY - currentY;
   if(Math.abs(deltaY) > 6) _touchMoved = true;
   if(_touchMoved){
     doScroll(deltaY);
-    _touchStartY = currentY;
+    if(dt > 0) _touchVelocity = (_touchVelocity * 0.6) + (deltaY / dt * 0.4);
+    _touchLastY = currentY;
+    _touchLastTime = now;
     e.preventDefault();
   }
 }, {passive: false});
 document.addEventListener('touchend', function(e){
-  _touchActive = false;
-  _touchMoved = false;
+  if(_touchActive){
+    _touchActive = false;
+    if(_touchMoved && Math.abs(_touchVelocity) > 0.1){
+      _startMomentum(_touchVelocity);
+    }
+    _touchMoved = false;
+    _touchVelocity = 0;
+  }
 });
 
 /* init: start on the mystery portrait, waiting for the Spin lever  */
