@@ -498,6 +498,7 @@ function saveState(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); 
 /* ============================ HELPERS ============================ */
 function enabledSurvivors(){ return state.survivors.filter(s=>s.enabled); }
 function completedSet(){ return new Set(state.completed); }
+function currentSurvivor(){ return state.survivors.find(s=>s.id===state.currentId && s.enabled) || null; }
 function remainingPool(){ return enabledSurvivors().filter(s=>!state.completed.includes(s.id)); }
 function tierIndex(completedCount){
   const cps = checkpoints();
@@ -514,7 +515,8 @@ function initials(name){ return name.split(/\s+/).map(w=>w[0]).join("").slice(0,
 function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg; t.classList.add("show"); clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove("show"),2200); }
 
 function rollNext(){
-  if(state.currentId) return;
+  if(currentSurvivor()) return;
+  state.currentId = null; // clear any stale id that no longer maps to an enabled survivor
   const pool = remainingPool();
   if(pool.length===0){ state.currentId=null; saveState(); render(); checkVictory(); return; }
   const pick = pool[Math.floor(Math.random()*pool.length)];
@@ -555,16 +557,17 @@ function resetRun(keepRoster=true){
 
 /* ============================ ACTIONS ============================ */
 function onEscaped(){
-  if(!state.currentId) return;
-  if(!state.completed.includes(state.currentId)) state.completed.push(state.currentId);
+  const cur = currentSurvivor();
+  if(!cur) return;
+  if(!state.completed.includes(cur.id)) state.completed.push(cur.id);
   // stats
   const st = state.stats;
   st.totalMatches++; st.wins++;
   st.currentStreak++;
   if(st.currentStreak > st.bestStreak) st.bestStreak = st.currentStreak;
-  if(!st.perSurvivor[state.currentId]) st.perSurvivor[state.currentId] = {matches:0,wins:0};
-  st.perSurvivor[state.currentId].matches++;
-  st.perSurvivor[state.currentId].wins++;
+  if(!st.perSurvivor[cur.id]) st.perSurvivor[cur.id] = {matches:0,wins:0};
+  st.perSurvivor[cur.id].matches++;
+  st.perSurvivor[cur.id].wins++;
   state.currentId = null;
   saveState();
   toast("Escaped! Survivor completed.");
@@ -572,7 +575,8 @@ function onEscaped(){
   render();
 }
 function onDied(){
-  if(!state.currentId) return;
+  const cur = currentSurvivor();
+  if(!cur) return;
   const tier = currentTier();
   const cps = checkpoints();
   const prevCp = tier===0 ? 0 : cps[tier-1];
@@ -583,8 +587,8 @@ function onDied(){
   const st = state.stats;
   st.totalMatches++; st.losses++;
   st.currentStreak = 0;
-  if(!st.perSurvivor[state.currentId]) st.perSurvivor[state.currentId] = {matches:0,wins:0};
-  st.perSurvivor[state.currentId].matches++;
+  if(!st.perSurvivor[cur.id]) st.perSurvivor[cur.id] = {matches:0,wins:0};
+  st.perSurvivor[cur.id].matches++;
   state.currentId = null;
   saveState();
   toast("Died. Reset to start of tier " + (tier+1) + ".");
@@ -606,7 +610,6 @@ function render(){
   } catch(e){ toast('ERR render ' + page + ': ' + e.message); }
 }
 function renderHeader(){
-  document.getElementById("profileName").textContent = state.profileName;
   const av = document.getElementById("avatar");
   const parts = state.profileName.trim().split(/\s+/);
   av.textContent = (parts[0]?.[0]||"") + (parts[1]?.[0]||parts[0]?.[1]||"");
@@ -648,8 +651,17 @@ function renderDashboard(){
     att.appendChild(d);
   });
 
-  // current survivor
-  const cur = state.survivors.find(s=>s.id===state.currentId);
+  // current survivor (self-heal: if currentId is stale/invalid, re-roll)
+  var cur = currentSurvivor();
+  if(!cur && remainingPool().length>0){
+    state.currentId = null;
+    const _pick = remainingPool()[Math.floor(Math.random()*remainingPool().length)];
+    state.currentId = _pick.id;
+    if(state.randomChallenge) state.currentChallenge = CHALLENGES[Math.floor(Math.random()*CHALLENGES.length)];
+    else state.currentChallenge = null;
+    saveState();
+    cur = currentSurvivor();
+  }
   const portrait = document.getElementById("curPortrait");
   if(cur){
     if(cur.imageUrl){
