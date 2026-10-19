@@ -1259,6 +1259,37 @@ function applyScale(){
   st.style.transform = 'translate(-50%, -50%) scale(' + scale + ')';
 }
 
+/* ============================ TOUCH SCROLLING ============================ */
+var _touchStartY = 0, _touchActive = false, _touchMoved = false;
+document.addEventListener('touchstart', function(e){
+  if(e.touches.length === 1){
+    _touchStartY = e.touches[0].clientY;
+    _touchActive = true;
+    _touchMoved = false;
+  }
+}, {passive: true});
+document.addEventListener('touchmove', function(e){
+  if(!_touchActive || e.touches.length !== 1) return;
+  var currentY = e.touches[0].clientY;
+  var deltaY = _touchStartY - currentY;
+  if(Math.abs(deltaY) > 6) _touchMoved = true;
+  if(_touchMoved){
+    var st = document.getElementById('stage');
+    var scale = 1;
+    if(st){
+      var m = st.style.transform.match(/scale\(([^)]+)\)/);
+      if(m) scale = parseFloat(m[1]) || 1;
+    }
+    doScroll(deltaY / scale);
+    _touchStartY = currentY;
+    e.preventDefault();
+  }
+}, {passive: false});
+document.addEventListener('touchend', function(e){
+  _touchActive = false;
+  _touchMoved = false;
+});
+
 /* init: start on the mystery portrait, waiting for the Spin lever */
 render();
 applyScale();
