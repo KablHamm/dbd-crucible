@@ -596,10 +596,14 @@ function onDied(){
 /* ============================ RENDER ============================ */
 function render(){
   try { renderHeader(); } catch(e){ toast('ERR renderHeader: ' + e.message); }
-  try { renderDashboard(); } catch(e){ toast('ERR renderDashboard: ' + e.message); }
-  try { renderStats(); } catch(e){ toast('ERR renderStats: ' + e.message); }
-  try { renderSettings(); } catch(e){ toast('ERR renderSettings: ' + e.message); }
-  try { renderRules(); } catch(e){ toast('ERR renderRules: ' + e.message); }
+  const page = (typeof PAGES !== 'undefined') ? PAGES[pageIndex] : 'dashboard';
+  try {
+    if(page === 'board') renderBoard();
+    else if(page === 'stats') renderStats();
+    else if(page === 'rules') renderRules();
+    else if(page === 'settings') renderSettings();
+    else renderDashboard();
+  } catch(e){ toast('ERR render ' + page + ': ' + e.message); }
 }
 function renderHeader(){
   document.getElementById("profileName").textContent = state.profileName;
@@ -630,8 +634,6 @@ function renderDashboard(){
   const remToCp = Math.max(0, nextCp - done);
   document.getElementById("nextCp").textContent = "NEXT CHECKPOINT IN " + remToCp + " ESCAPE" + (remToCp===1?"":"S");
   document.getElementById("remaining").textContent = (total-done) + " Survivor" + ((total-done)===1?"":"s") + " remaining.";
-  var bp = document.getElementById("boardProgress");
-  if(bp) bp.textContent = done + " / " + total + " completed";
 
   // attempts buckets
   const att = document.getElementById("attempts");
@@ -676,8 +678,13 @@ function renderDashboard(){
   const _r = _ranges[tier];
   document.getElementById("curTier").textContent = _r ? ("Tier Level " + _r[0] + "–" + _r[1]) : ("Tier " + tier);
   document.getElementById("curLoadout").textContent = "Perk limit: " + tierPerkLimit(tier) + " · " + tierPerkReq(tier);
+}
 
-  // board
+function renderBoard(){
+  const total = enabledSurvivors().length;
+  const done = state.completed.length;
+  var bp = document.getElementById("boardProgress");
+  if(bp) bp.textContent = done + " / " + total + " completed";
   const board = document.getElementById("board");
   board.innerHTML = "";
   const doneSet = completedSet();
@@ -689,7 +696,7 @@ function renderDashboard(){
     if(!s.enabled) cls += " disabled";
     t.className = cls;
     if(s.imageUrl){
-      const img = document.createElement("img"); img.src = s.imageUrl; img.alt = s.name;
+      const img = document.createElement("img"); img.src = s.imageUrl; img.alt = s.name; img.loading = "lazy";
       t.appendChild(img);
     } else {
       const lbl = document.createElement("div"); lbl.className = "lbl";
@@ -699,7 +706,6 @@ function renderDashboard(){
     t.title = s.name;
     board.appendChild(t);
   });
-  toast('renderDashboard done, tiles=' + board.children.length);
 }
 
 function renderStats(){
