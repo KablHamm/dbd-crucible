@@ -184,6 +184,38 @@
   .perk-row .pr-text { min-width: 0; flex: 1; }
   .perk-empty { text-align: center; color: var(--muted); font-size: 12px; padding: 18px 0; }
 
+  /* ---------- Challenge checklist ---------- */
+  /* Each challenge is a tappable row with a checkbox; tapping toggles completion.
+     Rows are real <button>s so they are easy to hit on the Rabbit R1. */
+  .ch-progress {
+    display: flex; align-items: center; gap: 8px; margin: 0 0 10px;
+    font-size: clamp(11px, 2.6vw, 13px); color: var(--muted); font-weight: 600;
+  }
+  .ch-progress .bar { flex: 1; margin: 0; height: 8px; }
+  .ch-progress .bar .fill { background: linear-gradient(90deg, var(--green), var(--accent2)); }
+  .ch-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+  .ch-row {
+    display: flex; align-items: center; gap: 8px; width: 100%; text-align: left;
+    background: #0a0514; border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 8px; cursor: pointer; color: var(--text); font-family: inherit;
+    font-size: clamp(12px, 3vw, 14px); line-height: 1.3;
+  }
+  .ch-row:active { transform: scale(.99); }
+  .ch-box {
+    flex: none; width: 18px; height: 18px; border-radius: 5px; display: grid; place-items: center;
+    border: 1px solid var(--border); background: #120824; font-size: 12px; line-height: 1;
+    color: transparent; font-weight: 700;
+  }
+  .ch-row.done { border-color: var(--green); }
+  .ch-row.done .ch-box { background: var(--green); border-color: var(--green); color: #06130a; }
+  .ch-row.done .ch-text { color: var(--muted); text-decoration: line-through; }
+  .ch-row.muted .ch-text { color: var(--muted); }
+  .ch-row .ch-text { flex: 1; min-width: 0; }
+  @media (max-width: 300px) {
+    .ch-row { padding: 6px 7px; }
+    .ch-row .ch-box { width: 16px; height: 16px; }
+  }
+
   /* Perk detail: bottom sheet on phones, centred dialog on wider screens. It covers
      the whole viewport on purpose so it also works inside a short embedded frame. */
   .perk-detail {
@@ -423,7 +455,7 @@
     <div class="brand">
       <img class="logo" src="data:image/webp;base64,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" alt="DBD" />
       <div>
-        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.5</span></h1>
+        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.6</span></h1>
         <small>Survivor Endurance Marathon</small>
       </div>
     </div>
@@ -640,9 +672,18 @@ const PERK_CHALLENGES = [
   "Get a dead hard",
   "Get a sprint burst escape"
 ];
+/* A challenge is "done" once the player has ticked it off in the Challenges list.
+   Completed challenges are excluded from Random Challenge picks so the player only
+   keeps seeing things they have not yet achieved. If everything is done, fall back to
+   the full pool so the feature never runs dry. */
+function isChallengeDone(t){
+  return Array.isArray(state.completedChallenges) && state.completedChallenges.indexOf(t) !== -1;
+}
 function pickChallenge(){
   const pool = currentTier() >= 3 ? CHALLENGES : CHALLENGES.concat(PERK_CHALLENGES);
-  return pool[Math.floor(Math.random()*pool.length)];
+  const remaining = pool.filter(t=>!isChallengeDone(t));
+  const src = remaining.length ? remaining : pool;
+  return src[Math.floor(Math.random()*src.length)];
 }
 const TIER_PERKS = [4,4,4,4,0];
 const TIER_REQ = [
@@ -1118,6 +1159,7 @@ function defaultState(){
     randomChallenge: false,
     difficulty: 'normal',
     currentChallenge: null,
+    completedChallenges: [],
     currentPerks: [],
     stats: {
       totalMatches: 0,
@@ -1180,6 +1222,7 @@ function loadState(){
     if(!s.achievements) s.achievements = {};
     if(!s.difficulty) s.difficulty = 'normal';
     if(s.currentChallenge === undefined) s.currentChallenge = null;
+    if(!Array.isArray(s.completedChallenges)) s.completedChallenges = [];
     if(!Array.isArray(s.currentPerks)) s.currentPerks = [];
     return s;
   } catch(e){ return defaultState(); }
@@ -1514,7 +1557,7 @@ function renderDashboard(){
     }
     nameEl.textContent = cur.name;
     if(cc){
-      if(state.randomChallenge && state.currentChallenge && !(currentTier() >= 3 && PERK_CHALLENGES.indexOf(state.currentChallenge) !== -1)){
+      if(state.randomChallenge && state.currentChallenge && !isChallengeDone(state.currentChallenge) && !(currentTier() >= 3 && PERK_CHALLENGES.indexOf(state.currentChallenge) !== -1)){
         cc.textContent = "Challenge: " + state.currentChallenge;
         cc.style.display = "block";
       } else {
@@ -2221,20 +2264,58 @@ function perkIcon(name, cls){
          ';--pk-r:' + Math.floor(i / PERK_SPRITE_COLS) + '"></span>';
 }
 
+/* Toggle a challenge's completion state. Rows are buttons, so this is the tap
+   target; the list re-renders to reflect the new state and persists it. */
+function toggleChallenge(t){
+  if(!t) return;
+  if(!Array.isArray(state.completedChallenges)) state.completedChallenges = [];
+  const i = state.completedChallenges.indexOf(t);
+  if(i === -1) state.completedChallenges.push(t);
+  else state.completedChallenges.splice(i, 1);
+  saveState();
+  renderChallengesList();
+  render();   // keep the home card's active-challenge line in sync
+}
 function renderChallengesList(){
   const c = document.getElementById("challengesContent");
   if(!c) return;
-  const item = (t, muted)=> '<li style="margin:2px 0'+(muted?';color:var(--muted)':'')+'">'+t+'</li>';
+  const done = state.completedChallenges;
+  const isDone = t=>done.indexOf(t) !== -1;
+  const all = CHALLENGES.concat(PERK_CHALLENGES);
+  const doneCount = all.filter(isDone).length;
+  const total = all.length;
+  const pct = total ? Math.round(doneCount/total*100) : 0;
+
+  const row = (t, muted)=>{
+    const d = isDone(t);
+    // Muted = perk challenge outside its usable tiers; still checkable, just dimmed.
+    const cls = 'ch-row' + (d ? ' done' : '') + (muted && !d ? ' muted' : '');
+    return '<button class="' + cls + '" data-ch="' + escapeHtml(t) + '">' +
+      '<span class="ch-box">' + (d ? '\u2713' : '') + '</span>' +
+      '<span class="ch-text">' + escapeHtml(t) + '</span>' +
+      '</button>';
+  };
+
   c.innerHTML =
     '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">' +
       '<h2 style="margin:0">Challenges</h2>' +
       '<button class="btn ghost" id="challengesBack" style="padding:6px 12px;font-size:12px">Back</button>' +
     '</div>' +
-    '<h3 style="margin:8px 0 4px">General ('+CHALLENGES.length+')</h3>' +
-    '<ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.5">'+CHALLENGES.map(t=>item(t,false)).join("")+'</ul>' +
-    '<h3 style="margin:16px 0 4px">Perk challenges ('+PERK_CHALLENGES.length+')</h3>' +
+    '<div class="ch-progress">' +
+      '<span>Completed</span>' +
+      '<div class="bar"><div class="fill" style="width:' + pct + '%"></div></div>' +
+      '<span>' + doneCount + ' / ' + total + '</span>' +
+    '</div>' +
+    '<div style="font-size:12px;color:var(--muted);margin-bottom:8px">Tap a challenge to tick it off when you complete it.</div>' +
+    '<h3 style="margin:8px 0 4px">General (' + CHALLENGES.length + ')</h3>' +
+    '<div class="ch-list">' + CHALLENGES.map(t=>row(t,false)).join('') + '</div>' +
+    '<h3 style="margin:16px 0 4px">Perk challenges (' + PERK_CHALLENGES.length + ')</h3>' +
     '<div style="font-size:12px;color:var(--muted);margin-bottom:4px">Only offered at tier levels 1\u20133 (levels 4\u20135 have random or no perks).</div>' +
-    '<ul style="margin:0;padding-left:18px;font-size:13px;line-height:1.5">'+PERK_CHALLENGES.map(t=>item(t,true)).join("")+'</ul>';
+    '<div class="ch-list">' + PERK_CHALLENGES.map(t=>row(t,true)).join('') + '</div>';
+
+  c.querySelectorAll('.ch-row').forEach(b=>{
+    b.onclick = ()=> toggleChallenge(b.getAttribute('data-ch'));
+  });
   document.getElementById("challengesBack").onclick = ()=>{ showPage(PAGES.indexOf('settings')); };
 }
 
