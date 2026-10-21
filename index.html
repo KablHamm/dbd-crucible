@@ -317,7 +317,7 @@
   .perk-reel { position: relative; width: var(--pk-size); height: var(--pk-size); overflow: hidden; border-radius: 6px; box-shadow: 0 0 0 1px rgba(245,197,66,.55); flex: none; will-change: transform; }
   .perk-reel .reel-cell { position: absolute; left: 0; top: 0; width: 100%; height: 100%; will-change: transform; }
   .perk-reel .reel-cell .perk-ico { width: 100%; height: 100%; border-radius: 0; box-shadow: none; }
-  .perk-reel-name { font-size: clamp(10px, 2.3vw, 13px); font-weight: 700; line-height: 1.15; color: var(--gold); text-align: center; overflow-wrap: anywhere; min-height: 1.2em; }
+  .perk-reel-name { font-size: clamp(10px, 2.3vw, 13px); font-weight: 700; line-height: 1.15; color: var(--gold); text-align: center; overflow-wrap: anywhere; min-height: 2.6em; }
   .perk-note { font-size: clamp(9px, 2.2vw, 12px); color: var(--muted); margin-top: 6px; }
   /* Scoped as .perk-card .perk-reroll so it beats the base .btn padding/font-size,
      which is declared further down the stylesheet. Keeps the re-roll control small. */
@@ -486,7 +486,7 @@
     <div class="brand">
       <img class="logo" src="data:image/webp;base64,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" alt="DBD" />
       <div>
-        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.18</span></h1>
+        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.20</span></h1>
         <small>Survivor Endurance Marathon</small>
       </div>
     </div>
@@ -1469,6 +1469,7 @@ function toast(msg){ const t=document.getElementById("toast"); t.textContent=msg
 /* ============================ SLOT-MACHINE REEL ============================ */
 var _reelRaf = null, _reelToken = 0, _portraitCache = {}, _spinning = false;
 var _perkReelRaf = null, _perkReelToken = 0, _perkSpinning = false, _perkReelSlots = [];
+var _survivorDone = false, _perkReelsRemaining = 0;
 var REEL_DUR = 3000, REEL_FAST = 1500, REEL_SLOTS = 45;
 
 function preloadPortraits(){
@@ -1528,19 +1529,23 @@ function cancelReel(){
   _perkReelToken++;
   const p = document.getElementById("curPortrait");
   if(p) p.classList.remove("spinning", "fast");
+  _spinning = false;
   _perkSpinning = false;
+  _survivorDone = false;
+  _perkReelsRemaining = 0;
 }
 function stopReel(){ const id = state.currentId; cancelReel(); _spinning = false; if(id) paintPortrait(id); }
 
 function finishReel(finalId, portrait){
-  if(_perkReelRaf){ cancelAnimationFrame(_perkReelRaf); _perkReelRaf = null; }
-  _perkReelToken++;
   _reelRaf = null;
-  _spinning = false;
-  _perkSpinning = false;
+  _spinning = false;  // survivor reel done; perks may still be spinning
   if(portrait) portrait.classList.remove("spinning", "fast");
   paintPortrait(finalId);
-  render(); // swap the buttons back to Escaped / Died; shows final perks
+  _survivorDone = true;
+  // If all perk reels are also done, finalize; otherwise perks continue spinning
+  if(_perkReelsRemaining <= 0){
+    _finalizeSpin();
+  }
 }
 
 /* Vertical reel: 1.5 s of constant fast scroll, then linear braking that lands
@@ -1585,7 +1590,7 @@ function spinReel(finalId){
 
   const frame = (now) => {
     if(token !== _reelToken) return;
-    const el = now - t0;
+    const el = performance.now() - t0;
     const p = Math.min(posAt(el), K);
     const base = Math.floor(p);
     for(let k = 0; k < 3; k++){
@@ -1610,8 +1615,15 @@ function beginSpin(finalId){
   _spinning = true;
   const rand = tierRandomPerkCount(currentTier());
   _perkSpinning = rand > 0;
+  _survivorDone = false;
+  _perkReelsRemaining = _perkSpinning ? rand : 0;
   render();      // shows the disabled "Spinning…" control, keeps the window black; builds perk reels
-  if(_perkSpinning && _perkReelSlots.length) spinPerkReels(state.currentPerks, 3000);
+  // start perk reel animation with staggered stops: 1s after the survivor (3s),
+  // then 1s between each perk
+  if(_perkSpinning && _perkReelSlots.length){
+    const durations = _perkReelSlots.map((_, i) => 4000 + i * 1000);
+    spinPerkReels(state.currentPerks, durations);
+  }
   spinReel(finalId);
 }
 
@@ -1899,8 +1911,10 @@ function rerollPerks(){
   saveState();
   const rand = tierRandomPerkCount(currentTier());
   _perkSpinning = rand > 0;
+  _survivorDone = true;  // no survivor spin, so survivor is "done"
+  _perkReelsRemaining = _perkSpinning ? rand : 0;
   renderDashboard();   // builds the reel DOM (because _perkSpinning)
-  if(_perkSpinning && _perkReelSlots.length) spinPerkReels(state.currentPerks, 1500);
+  if(_perkSpinning && _perkReelSlots.length) spinPerkReels(state.currentPerks, _perkReelSlots.map(() => 1500));
 }
 
 /* Perk slot reel: a vertical slot-machine spin for each random perk, mirroring
@@ -1923,55 +1937,79 @@ function setPerkReelCell(node, perkName){
   node.style.setProperty("--pk-c", String(i % PERK_SPRITE_COLS));
   node.style.setProperty("--pk-r", String(Math.floor(i / PERK_SPRITE_COLS)));
 }
-function spinPerkReels(finalPerks, dur){
-  if(!_perkReelSlots.length){ _perkSpinning = false; renderPerkCard(currentTier()); return; }
+function spinPerkReels(finalPerks, durations){
+  if(!_perkReelSlots.length){ _perkSpinning = false; renderPerkCard(currentTier()); _finalizeSpinIfDone(); return; }
   const token = ++_perkReelToken;
   const t0 = performance.now();
-  const TA = 1.5, TB = (dur - 1500) / 1000;
-  const K = REEL_SLOTS;
+  const TA = 1.5;
   const slotData = _perkReelSlots.map((slot, i) => {
     const finalPerk = finalPerks && finalPerks[i];
     const finalIdx = finalPerk ? SURVIVOR_PERKS.indexOf(finalPerk) : -1;
     const pool = SURVIVOR_PERKS;
     const len = pool.length;
-    const startIdx = finalIdx < 0 ? 0 : ((finalIdx - K) % len + len) % len;
-    return { slot, finalPerk, pool, len, startIdx, nameEl: slot.nameEl };
+    const startIdx = finalIdx < 0 ? 0 : ((finalIdx - REEL_SLOTS) % len + len) % len;
+    const dur = (durations && durations[i]) ? durations[i] : 3000;
+    const TB = Math.max(0.001, (dur - 1500) / 1000);
+    return { slot, finalPerk, pool, len, startIdx, nameEl: slot.nameEl, dur, TB, done: false };
   });
-  const posAt = (ms) => {
+  const posAt = (ms, dur, TB) => {
     const t = Math.min(ms, dur) / 1000;
-    if(t <= TA || TB <= 0) return (K / (TA + TB / 2 || 1)) * t;
+    if(t <= TA || TB <= 0) return (REEL_SLOTS / (TA + TB / 2 || 1)) * t;
     const dt = t - TA;
-    const v0 = K / (TA + TB / 2);
+    const v0 = REEL_SLOTS / (TA + TB / 2);
     return v0 * TA + v0 * dt - (v0 * dt * dt) / (2 * TB);
   };
   const frame = (now) => {
     if(token !== _perkReelToken) return;
-    const el = now - t0;
-    const p = Math.min(posAt(el), K);
-    const base = Math.floor(p);
+    const el = performance.now() - t0;
+    let anyRunning = false;
     for(const sd of slotData){
+      if(sd.done) continue;
+      const p = Math.min(posAt(el, sd.dur, sd.TB), REEL_SLOTS);
+      const base = Math.floor(p);
       const cells = sd.slot.cells;
+      const FH = sd.slot.container.clientHeight || 44;
       for(let k = 0; k < 3; k++){
         const slot = base - 1 + k;
         const node = cells[k];
         const idx = ((sd.startIdx + slot) % sd.len + sd.len) % sd.len;
         setPerkReelCell(node, sd.pool[idx]);
-        node.style.transform = "translate3d(0," + ((slot - p) * (sd.slot.container.clientHeight || 44)) + "px,0)";
+        node.style.transform = "translate3d(0," + ((slot - p) * FH) + "px,0)";
       }
       const centered = Math.round(p);
       const ci = ((sd.startIdx + centered) % sd.len + sd.len) % sd.len;
       if(sd.nameEl) sd.nameEl.textContent = sd.pool[ci] || "";
+      if(el >= sd.dur){
+        sd.done = true;
+        _perkReelsRemaining = Math.max(0, _perkReelsRemaining - 1);
+        if(sd.nameEl) sd.nameEl.textContent = sd.finalPerk || "";
+        if(_perkReelsRemaining <= 0){
+          _perkReelRaf = null;
+          _perkSpinning = false;
+          _finalizeSpin();
+          return;
+        }
+      } else {
+        anyRunning = true;
+      }
     }
-    if(el >= dur){
-      _perkReelRaf = null;
-      _perkSpinning = false;
-      for(const sd of slotData){ if(sd.nameEl) sd.nameEl.textContent = sd.finalPerk || ""; }
-      renderPerkCard(currentTier());
-      return;
-    }
-    _perkReelRaf = requestAnimationFrame(frame);
+    if(anyRunning){ _perkReelRaf = requestAnimationFrame(frame); }
   };
   _perkReelRaf = requestAnimationFrame(frame);
+}
+function _finalizeSpin(){
+  _spinning = false;
+  _perkSpinning = false;
+  const portrait = document.getElementById("curPortrait");
+  if(portrait) portrait.classList.remove("spinning", "fast");
+  const cur = currentSurvivor();
+  if(cur) paintPortrait(cur.id);
+  render();
+}
+function _finalizeSpinIfDone(){
+  if(_perkReelsRemaining <= 0 && _survivorDone){
+    _finalizeSpin();
+  }
 }
 
 function renderBoard(){
