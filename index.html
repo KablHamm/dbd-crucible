@@ -142,6 +142,18 @@
     0%, 100% { box-shadow: 0 0 0 rgba(245,197,66,0); }
     50% { box-shadow: 0 0 16px rgba(245,197,66,.7); }
   }
+  @keyframes reelShake {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    15% { transform: translate(-3px, 1px) rotate(-1deg); }
+    30% { transform: translate(3px, -1px) rotate(1deg); }
+    45% { transform: translate(-2px, 2px) rotate(-0.5deg); }
+    60% { transform: translate(2px, -2px) rotate(0.5deg); }
+    75% { transform: translate(-1px, 1px) rotate(-0.25deg); }
+    90% { transform: translate(1px, -1px) rotate(0.25deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+  }
+  .survivor-portrait.shake { animation: reelShake 0.4s ease-out; }
+  .perk-reel.shake { animation: reelShake 0.4s ease-out; }
   .survivor-name { font-size: clamp(16px, 4vw, 22px); font-weight: 700; text-align: center; margin-bottom: 4px; }
   .tier-chip {
     display: block; width: fit-content; margin: clamp(6px, 1.5vh, 10px) auto clamp(8px, 2vh, 12px);
@@ -488,7 +500,7 @@
     <div class="brand">
       <img class="logo" src="data:image/webp;base64,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" alt="DBD" />
       <div>
-        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.36</span></h1>
+        <h1>The DBD Crucible <span style="font-size:0.6em;opacity:0.6;vertical-align:middle" id="versionTag">v4.37</span></h1>
         <small>Survivor Endurance Marathon</small>
       </div>
     </div>
@@ -1549,8 +1561,14 @@ function stopReel(){ const id = state.currentId; cancelReel(); _spinning = false
 function finishReel(finalId, portrait){
   _reelRaf = null;
   _spinning = false;  // survivor reel done; perks may still be spinning
-  if(portrait) portrait.classList.remove("spinning", "fast");
+  if(portrait){
+    portrait.classList.remove("spinning", "fast");
+  }
   paintPortrait(finalId);
+  if(portrait){
+    portrait.classList.add("shake");
+    setTimeout(function(){ portrait.classList.remove("shake"); }, 450);
+  }
   _survivorDone = true;
   // If all perk reels are also done, finalize; otherwise perks continue spinning
   if(_perkReelsRemaining <= 0){
@@ -1992,6 +2010,7 @@ function spinPerkReels(finalPerks, durations){
       if(sd.nameEl) sd.nameEl.textContent = sd.pool[ci] || "";
       if(el >= sd.dur){
         sd.done = true;
+        if(sd.slot && sd.slot.container){ sd.slot.container.classList.add("shake"); setTimeout(function(){ sd.slot.container.classList.remove("shake"); }, 450); }
         _perkReelsRemaining = Math.max(0, _perkReelsRemaining - 1);
         if(sd.nameEl) sd.nameEl.textContent = sd.finalPerk || "";
         if(_perkReelsRemaining <= 0){
