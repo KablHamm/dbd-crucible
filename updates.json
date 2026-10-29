@@ -1,5 +1,12 @@
 {
   "version": 1,
-  "survivors": [],
+  "survivors": [
+    {
+      "name": "Sienna Shaw",
+      "id": "sienna_shaw",
+      "image": "https://deadbydaylight.wiki.gg/images/S55_SiennaShaw_Portrait.png",
+      "perks": ["Best Gift Ever", "Shared Trauma", "Valkyrie's Rage"]
+    }
+  ],
   "perks": []
 }
